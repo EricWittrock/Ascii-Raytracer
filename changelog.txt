@@ -1,0 +1,6 @@
+4/13/23 4:30pm Created classes and math for basic 3d rendering. The terminal displays a sphere
+4/14/23 10:43am Added camera movement with key inputs. switched ray marching to ray tracing. The program renders a list of triangles
+4/14/23 11:18am fixed triangle normals
+4/14/23 1:23pm added shadows
+4/14/23 9:55pm added .obj file parser to load in 3d objects
+4/15/23 11:58pm created Oct tree class for spatial hashing (collision optimization)
