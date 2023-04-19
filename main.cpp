@@ -28,16 +28,16 @@ int main(int argc, char *argv[])
 
   Screen scr;
   
-  while(1){
+  while(1) {
     scr.draw();
 
     int key = getch();
 
     //std::cout <<  std::endl << key << std::endl;
-    if(key == 'q' || key == 'Q'){
+    if(key == 'q' || key == 'Q') {
       break;
     }
-    if(key == 'r'){
+    if(key == 'r') {
       scr.randomizeLight();
       continue;
     }
