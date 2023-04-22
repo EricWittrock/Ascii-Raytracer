@@ -20,6 +20,7 @@ Triangle::Triangle(Vec3 p1, Vec3 p2, Vec3 p3) {
     this->p1 = p1;
     this->p2 = p2;
     this->p3 = p3;
+    depth = -1;
     calcNormal();
     calcCenter();
 }
@@ -174,7 +175,7 @@ void load_obj(std::vector<Triangle> &triangles, std::string path, float scale, V
 
 void load_geometry(std::vector<Triangle> &triangles) {
 
-    triangles.push_back(Triangle(Vec3(-200, 5, -200), Vec3(200, 5, -200), Vec3(0, 5, 300)));
+    triangles.push_back(Triangle(Vec3(-70, 5, -70), Vec3(70, 5, -70), Vec3(0, 5, 70)));
     load_obj(triangles, "./dog.obj", 4.0, Vec3(0, 4, 20));
     // print all the triangles
     // for (int i = 0; i < (int) triangles.size(); i++) {

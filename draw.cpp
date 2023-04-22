@@ -3,10 +3,11 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <limits.h>
-#include <string.h>
+//#include <string.h>
 #include <string>
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #include "draw.h"
 #include "vec3.h"
@@ -18,7 +19,7 @@
 #define sensor_scale 0.15
 
 #define MAX_TRIANGLES 10 // max triangles per box
-#define MAX_DEPTH 6 // max depth of oct tree
+#define MAX_DEPTH 10 // max depth of oct tree
 
 std::vector<Triangle> allTriangles;
 
@@ -35,6 +36,7 @@ public:
     int hasChildren;
     int depth;
     std::vector<Triangle*> triangles;
+    std::vector<Triangle*> uniqueTris;
 
     Box(Vec3 rt, Vec3 lb) {
         hasChildren = 0;
@@ -71,7 +73,7 @@ public:
             if(parent == NULL){
                 t = &allTriangles[i];
                 //std::cout << "root box has no parent (depth = " << depth << ", numTri = " << numTriangles << ")" << std::endl;
-            }else{
+            }else {
                 t = parent->triangles[i];
                 //std::cout << "box has a parent" << std::endl;
             }
@@ -87,13 +89,27 @@ public:
                 }
 
                 if(point.x > rt.x || point.x < lb.x || point.y < rt.y || point.y > lb.y || point.z > rt.z || point.z < lb.z){
-                    inBox = 0;
-                    break;
+                    inBox=0;
+                    //break;
                 }
             }
             if(inBox){
                 triangles.push_back(t);
+                if(depth > t->depth){
+                    t->depth = depth;
+                }
             }
+        }
+        if(parent != NULL){
+            //parent->triangles.clear();
+            std::vector<Triangle*> v2;
+            int parentDepth = parent->depth;
+            for(int i = 0; i < (int) parent->triangles.size(); i++){
+                if(parent->triangles[i]->depth <= parentDepth){
+                    v2.push_back(parent->triangles[i]);
+                }
+            }
+            parent->triangles = v2;
         }
     }
     void split() {
@@ -176,7 +192,7 @@ Screen::Screen() {
     std::cout << "num allTriangles: " << (int) allTriangles.size() << std::endl;
     hashbox.addTriangles();
     hashbox.split();
-    std::cout << "\n ----- hashbox is inited ------- \n";
+    /*std::cout << "\n ----- hashbox is inited ------- \n";
     std::cout << "num triangles (should = allTriangles): " << (int) hashbox.triangles.size() << std::endl;
     Box *chld = &hashbox;
     std::cout << "___parent depth: " << chld->depth << " (num Tris: " << chld->triangles.size() << ")" << std::endl;
@@ -232,7 +248,7 @@ Screen::Screen() {
         }
     }else{
         std::cout << "no children" << std::endl;
-    }
+    }*/
 
     //exit(0);
 
@@ -292,8 +308,17 @@ public:
 
 void getClosest(Box *b, Ray r, IntersectPoint *ipnt) {
 
-    /*int numTris = (int) b->triangles.size();
+    if(b->hasChildren){
+        for(int i = 0; i<8; i++){
+            if(b->children[i]->rayIntersects(r)){
+                getClosest(b->children[i], r, ipnt);
+            }
+        }
+    }
+    int numTris = (int) b->triangles.size();
     float minDist = ipnt->dist;
+    //Triangle *closest_ = ipnt->closest;
+    //Vec3 *closestPoint_ = ipnt->closestPoint;
     for(int i = 0; i<numTris; i++){
         Triangle *t = b->triangles[i];
         if(t->rayIntersects(r)){
@@ -303,54 +328,59 @@ void getClosest(Box *b, Ray r, IntersectPoint *ipnt) {
                 minDist = dist;
                 ipnt->closest = t;
                 ipnt->closestPoint = point;
+                ipnt->dist = dist;
             }
         }
-    }*/
+    }
+    
 
+    /*int numTris = (int) b->uniqueTris.size();
+    float minDist = ipnt->dist;
+    for(int i = 0; i<numTris; i++){
+        Triangle *t = b->uniqueTris[i];
+        if(t->rayIntersects(r)){
+            Vec3 point = t->interectPoint(r);
+            float dist = r.pos.dist2(point);
+            if(dist < minDist){
+                minDist = dist;
+                ipnt->closest = t;
+                ipnt->closestPoint = point;
+                ipnt->dist = dist;
+            }
+        }
+    }
     if(b->hasChildren){
         for(int i = 0; i<8; i++){
             if(b->children[i]->rayIntersects(r)){
                 getClosest(b->children[i], r, ipnt);
             }
         }
-    }else{
-        int numTris = (int) b->triangles.size();
-        float minDist = ipnt->dist;
-        //Triangle *closest_ = ipnt->closest;
-        //Vec3 *closestPoint_ = ipnt->closestPoint;
-        for(int i = 0; i<numTris; i++){
-            Triangle *t = b->triangles[i];
-            if(t->rayIntersects(r)){
-                Vec3 point = t->interectPoint(r);
-                float dist = r.pos.dist2(point);
-                if(dist < minDist){
-                    minDist = dist;
-                    ipnt->closest = t;
-                    ipnt->closestPoint = point;
-                    ipnt->dist = dist;
-                    //closest_ = t;
-                    //*closestPoint_ = point;
-                }
+    }*/
+
+    /*if(b->hasChildren){
+        for(int i = 0; i<8; i++){
+            if(b->children[i]->rayIntersects(r)){
+                getClosest(b->children[i], r, ipnt);
             }
         }
     }
-
-    /*float minDist = INT_MAX;
-    for(int k = 0; k < (int) allTriangles.size(); k++){
-        //triangles[k].calcNormal();   
-        Triangle *t = &allTriangles[k];
+    int numTris = (int) b->uniqueTris.size();
+    float minDist = ipnt->dist;
+    for(int i = 0; i<numTris; i++){
+        Triangle *t = b->uniqueTris[i];
         if(t->rayIntersects(r)){
             Vec3 point = t->interectPoint(r);
             float dist = r.pos.dist2(point);
             if(dist < minDist){
                 minDist = dist;
-                *closest = t;
-                *closestPoint = point;
+                ipnt->closest = t;
+                ipnt->closestPoint = point;
+                ipnt->dist = dist;
+
             }
-            if(endOnFirst) return 1;
         }
-    }
-    return 0;*/
+    }*/
+
 }
 
 void Screen::trace() {
@@ -379,16 +409,17 @@ void Screen::trace() {
                 if(surfaceBrightness < 0) surfaceBrightness *= -1;
                 //surfaceBrightness *= 1/(closestPoint.dist2(sun));
 
-                /*
+                
                 // shadows
-                closestPoint -= r.dir*0.001;                
+                Vec3 closestPoint = ip.closestPoint-(r.dir*0.001);                
                 Ray toSun;
                 toSun.pos = closestPoint;
                 toSun.dir = (sun-closestPoint).norm();
 
-                int inShade = getClosest(&hashbox, toSun, &closest, &closestPoint, 1);
-                if(inShade) surfaceBrightness *= 0.25;
-                */
+                IntersectPoint ip2;
+                getClosest(&hashbox, toSun, &ip2);
+                if(ip2.hit()) surfaceBrightness *= 0.25;
+
 
 
                 data[i][j] = surfaceBrightness*0.5;                

@@ -12,6 +12,7 @@ public:
     Vec3 p3;
     Vec3 normal;
     Vec3 center;
+    int depth;
     void calcNormal();
     void calcCenter();
     int rayIntersects(Ray r);

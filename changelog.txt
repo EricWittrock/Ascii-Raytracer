@@ -6,3 +6,16 @@
 4/15/23 11:58pm created Oct tree class for spatial hashing (collision optimization)
 4/17/23 3:40pm user can randomize light position
 4/18/23 11:00pm collisions are now spatially hashed. it runs much faster, but with bugs
+4/19/23 10:44am fixed invisible triangle bug
+4/19/23 10:52am re-added shadows with optimized code
+4/22/23 2:21pm fixed "blindspot" bug caused by hashing. optimization is done
+
+
+bugs:
+sometimes camera rotate keys (< >) don't work
+
+render "blindspot" bug from spatial hashing
+
+more models
+
+more color shades. include light gray and dark gray printing
