@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <ncurses.h>
 
 
 void Triangle::calcNormal() {
@@ -141,10 +142,10 @@ void load_obj(std::vector<Triangle> &triangles, std::string path, float scale, V
 
     std::ifstream file;
 
-    std::cout << "trying to open: " << path << std::endl;
+    //std::cout << "trying to open: " << path << std::endl;
     file.open(path);
     if(file.is_open()){
-        std::cout << "file opened" << std::endl;
+        //std::cout << "file opened" << std::endl;
         char c;
         std::string line = "";
         while(file){
@@ -169,17 +170,40 @@ void load_obj(std::vector<Triangle> &triangles, std::string path, float scale, V
         }
 
     } else{
-        std::cout << "failed to open " << path << std::endl;
+        std::cout << "failed to open file." << path << std::endl;
+        exit(1);
     }
 }
 
 void load_geometry(std::vector<Triangle> &triangles) {
 
-    triangles.push_back(Triangle(Vec3(-70, 5, -70), Vec3(70, 5, -70), Vec3(0, 5, 70)));
-    load_obj(triangles, "./dog.obj", 4.0, Vec3(0, 4, 20));
-    // print all the triangles
-    // for (int i = 0; i < (int) triangles.size(); i++) {
-    //     std::cout << "triangle " << i << ": " << triangles[i].p1 << ", " << triangles[i].p2 << ", " << triangles[i].p3 << std::endl;
-    // }
+    printw("select a model to load\n");
+    printw("1) dog\n");
+    printw("2) car\n");
+    printw("3) Tajmahal\n");
+    while(1){
+        char c = getch();
+        if(c == 49){
+            erase();
+            triangles.push_back(Triangle(Vec3(-70, 5, -70), Vec3(-70, 5, 70), Vec3(70, 5, 70)));
+            triangles.push_back(Triangle(Vec3(70, 5, 70), Vec3(70, 5, -70), Vec3(-70, 5, -70)));
+            load_obj(triangles, "./dog.obj", 4.0, Vec3(-5, 4, 5));
+
+            break;
+        }else if(c==50){
+            erase();
+            load_obj(triangles, "./car2.obj", 4.0, Vec3(0, 4, 20));
+            
+            break;
+        }else if(c==51){
+            erase();
+            triangles.push_back(Triangle(Vec3(-70, 5, -70), Vec3(-70, 5, 70), Vec3(70, 5, 70)));
+            triangles.push_back(Triangle(Vec3(70, 5, 70), Vec3(70, 5, -70), Vec3(-70, 5, -70)));
+            load_obj(triangles, "./tajmahal.obj", 4.0, Vec3(15, 4, 15));
+
+            break;
+        }
+    }
+
 }
 

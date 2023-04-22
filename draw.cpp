@@ -189,68 +189,9 @@ char brightness(float b){
 
 Screen::Screen() {
     load_geometry(allTriangles);
-    std::cout << "num allTriangles: " << (int) allTriangles.size() << std::endl;
+    //std::cout << "num allTriangles: " << (int) allTriangles.size() << std::endl;
     hashbox.addTriangles();
     hashbox.split();
-    /*std::cout << "\n ----- hashbox is inited ------- \n";
-    std::cout << "num triangles (should = allTriangles): " << (int) hashbox.triangles.size() << std::endl;
-    Box *chld = &hashbox;
-    std::cout << "___parent depth: " << chld->depth << " (num Tris: " << chld->triangles.size() << ")" << std::endl;
-    for(int i = 0; i<8; i++){
-        std::cout << "child " << i << " num triangles: " << (int) chld->children[i]->triangles.size() << std::endl;
-    }
-
-    chld = chld->children[4];
-    std::cout << "___parent depth: " << chld->depth << " (num Tris: " << chld->triangles.size() << ")" << std::endl;
-    if(chld->hasChildren){
-        for(int i = 0; i<8; i++){
-        std::cout << "child " << i << " num triangles: " << (int) chld->children[i]->triangles.size() << std::endl;
-        }
-    }else{
-        std::cout << "no children" << std::endl;
-    }
-
-    chld = chld->children[2];
-    std::cout << "___parent depth: " << chld->depth << " (num Tris: " << chld->triangles.size() << ")" << std::endl;
-    if(chld->hasChildren){
-        for(int i = 0; i<8; i++){
-        std::cout << "child " << i << " num triangles: " << (int) chld->children[i]->triangles.size() << std::endl;
-        }
-    }else{
-        std::cout << "no children" << std::endl;
-    }
-
-    chld = chld->children[2];
-    std::cout << "___parent depth: " << chld->depth << " (num Tris: " << chld->triangles.size() << ")" << std::endl;
-    if(chld->hasChildren){
-        for(int i = 0; i<8; i++){
-        std::cout << "child " << i << " num triangles: " << (int) chld->children[i]->triangles.size() << std::endl;
-        }
-    }else{
-        std::cout << "no children" << std::endl;
-    }
-
-    chld = chld->children[2];
-    std::cout << "___parent depth: " << chld->depth << " (num Tris: " << chld->triangles.size() << ")" << std::endl;
-    if(chld->hasChildren){
-        for(int i = 0; i<8; i++){
-        std::cout << "child " << i << " num triangles: " << (int) chld->children[i]->triangles.size() << std::endl;
-        }
-    }else{
-        std::cout << "no children" << std::endl;
-    }
-
-    chld = chld->children[2];
-    std::cout << "___parent depth: " << chld->depth << " (num Tris: " << chld->triangles.size() << ")" << std::endl;
-    if(chld->hasChildren){
-        for(int i = 0; i<8; i++){
-        std::cout << "child " << i << " num triangles: " << (int) chld->children[i]->triangles.size() << std::endl;
-        }
-    }else{
-        std::cout << "no children" << std::endl;
-    }*/
-
-    //exit(0);
 
     width = screen_width;
     height = screen_height;
@@ -284,7 +225,16 @@ void Screen::draw() {
                 mvaddch(i+1, j+1, '|');
                 continue;
             }
-            char pixle = brightness(data[i][j]);
+            
+            float b = data[i][j];
+            if(b > 100){
+                b -= 100;
+                attron(COLOR_PAIR(2));
+            }else{
+                attron(COLOR_PAIR(3));
+            }
+
+            char pixle = brightness(b);
             mvaddch(i+1, j+1, pixle);
         }
     }
@@ -422,7 +372,8 @@ void Screen::trace() {
 
 
 
-                data[i][j] = surfaceBrightness*0.5;                
+                data[i][j] = surfaceBrightness*0.6;
+                if(ip.closestPoint.y > 4.9) data[i][j] += 100; // 100s range used a metadata for ground
             }
             
         }
