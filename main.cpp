@@ -15,7 +15,7 @@ int upPressed = 0;
 int main(int argc, char *argv[])
 {
   // seed random
-  srand(time(NULL));
+  srand(0);
   
 
   init_terminal();

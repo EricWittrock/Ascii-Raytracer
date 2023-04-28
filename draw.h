@@ -14,7 +14,7 @@ public:
     Vec3 sun;
     float camRot;
     void draw();
-    void trace();
+    void trace(int q);
     void randomizeLight();
     Screen();
 };

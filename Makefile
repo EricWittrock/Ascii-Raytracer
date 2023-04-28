@@ -5,7 +5,7 @@ RM = rm -f
 CFLAGS = -Wall -Werror -ggdb -funroll-loops -DTERM=$(TERM)
 CXXFLAGS = -Wall -Werror -ggdb -funroll-loops -DTERM=$(TERM)
 
-LDFLAGS = -lncurses
+LDFLAGS = -lncurses -pthread
 
 BIN = main
 OBJS = main.o draw.o vec3.o geometry.o

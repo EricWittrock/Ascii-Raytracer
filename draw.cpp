@@ -7,7 +7,8 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <algorithm>
+//#include <algorithm>
+#include <thread>
 
 #include "draw.h"
 #include "vec3.h"
@@ -198,6 +199,7 @@ Screen::Screen() {
     focal = focal_length;
     sensorScale = sensor_scale;
     sun = Vec3(80,-50,5);
+    camRot = 0;
 
     data = new float*[height];
     for (int i = 0; i < height; i++) {
@@ -214,7 +216,17 @@ void Screen::randomizeLight(){
 }
 
 void Screen::draw() {
-    trace();
+    //trace(0);
+
+    std::thread t1(&Screen::trace, this,  1);
+    std::thread t2(&Screen::trace, this,  2);
+    std::thread t3(&Screen::trace, this,  3);
+    std::thread t4(&Screen::trace, this,  4);
+    t1.join();
+    t2.join();
+    t3.join();
+    t4.join();
+
     for (int i = -1; i < height+1; i++) {
         for (int j = -1; j < width+1; j++) {
             if(i == -1 || i == height) {
@@ -333,9 +345,34 @@ void getClosest(Box *b, Ray r, IntersectPoint *ipnt) {
 
 }
 
-void Screen::trace() {
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
+void Screen::trace(int q) {
+    float startH = 0.0;
+    float endH = 1.0;
+    float startW = 0.0;
+    float endW = 1.0;
+    if(q == 1){ // first quarter
+        startH = 0.0;
+        endH = 0.5;
+        startW = 0.0;
+        endW = 0.5;
+    }else if(q==2){
+        startH = 0.0;
+        endH = 0.5;
+        startW = 0.5;
+        endW = 1.0;
+    }else if(q==3){
+        startH = 0.5;
+        endH = 1.0;
+        startW = 0.0;
+        endW = 0.5;
+    }else if(q==4){
+        startH = 0.5;
+        endH = 1.0;
+        startW = 0.5;
+        endW = 1.0;
+    }
+    for (int i = height*startH; i < height*endH; i++) {
+        for (int j = width*startW; j < width*endW; j++) {
             float sensorY = (i-height/2.0)*sensorScale;
             float sensorX = (j-width/2.0)*sensorScale*0.5;
 

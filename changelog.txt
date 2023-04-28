@@ -12,6 +12,5 @@
 4/22/23 4:46pm added more 3d models
 4/22/23 5:18pm color to ground
 4/22/23 5:36pm added option to select model
-
-bugs:
-sometimes camera rotate keys (< >) don't work
+4/25/23 10:01am multithreading to improve performance
+4/27/23 8:14pm fixed bug that locked camera rotation
